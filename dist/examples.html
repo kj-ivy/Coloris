@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Coloris examples</title>
-    <link rel="stylesheet" type="text/css" href="coloris.min.css">
-    <style type="text/css">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Coloris examples</title>
+  <link rel="stylesheet" type="text/css" href="coloris.min.css">
+  <style type="text/css">
     @import url(https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap);
+
+    :root {
+      --color-1: #ff0000;
+      --color-2: #00ff00;
+      --color-3: #0000ff;
+      --color-4: #00ffff;
+      --color-5: #ff00ff;
+      --color-6: #ffff00;
+    }
 
     body {
       height: 120vh;
@@ -31,7 +40,7 @@
       font-weight: inherit;
       box-sizing: border-box;
     }
-      
+
     .examples {
       display: flex;
       flex-wrap: wrap;
@@ -67,35 +76,43 @@
       border-radius: 5px;
     }
 
-    </style>
-  </head>
-  <body>
-    <a href="https://github.com/mdbassit/Coloris">View <b>Coloris</b> on GitHub</a>
-    <h1>Coloris examples</h1>
-    <div class="examples">
-      <div class="example">
-        <p>Default color thumbnail</p>
-        <input type="text" value="green" data-coloris>
-      </div>
-      <div class="example square">
-        <p>Rounded square thumbnail</p>
-        <input type="text" class="coloris instance1" value="rgb(255, 0, 0)">
-      </div>
-      <div class="example circle">
-        <p>Circular thumbnail</p>
-        <input type="text" class="coloris instance2" value="#cc458faa">
-      </div>
-      <div class="example full">
-        <p>Full size thumbnail</p>
-        <input type="text" class="coloris instance3" value="#ffcc00">
-      </div>
-      <div class="example square" style="position: relative; top: 300px; padding-bottom: 30px;">
-        <p>The dialog will appear on top of this field for lack of space under it.</p>
-        <input type="text" class="coloris" value="#00a5cc">
-      </div>
+    .clr-field[style*="color: var("] input {
+      outline: 2px solid magenta;
+    }
+
+  </style>
+</head>
+<body>
+  <a href="https://github.com/mdbassit/Coloris">View <b>Coloris</b> on GitHub</a>
+  <h1>Coloris examples</h1>
+  <div class="examples">
+    <div class="example">
+      <p>Default color thumbnail</p>
+      <input type="text" value="green" data-coloris>
     </div>
-    <script type="text/javascript" src="coloris.min.js"></script>
-    <script type="text/javascript">
+    <div class="example square">
+      <p>Rounded square thumbnail</p>
+      <input type="text" class="coloris instance1" value="rgb(255, 0, 0)">
+    </div>
+    <div class="example circle">
+      <p>Circular thumbnail</p>
+      <input type="text" class="coloris instance2" value="#cc458faa">
+    </div>
+    <div class="example full">
+      <p>Full size thumbnail</p>
+      <input type="text" class="coloris instance3" value="#ffcc00">
+    </div>
+    <div class="example square" style="position: relative; top: 300px; padding-bottom: 30px;">
+      <p>The dialog will appear on top of this field for lack of space under it.</p>
+      <input type="text" class="coloris" value="#00a5cc">
+    </div>
+    <div class="example square">
+      <p>CSS Variable swatches</p>
+      <input type="text" class="coloris instance4" value="rgb(255, 0, 0)">
+    </div>
+  </div>
+  <script type="text/javascript" src="coloris.min.js"></script>
+  <script type="text/javascript">
 
     /** Default configuration **/
 
@@ -141,6 +158,22 @@
       swatchesOnly: true
     });
 
-    </script>
-  </body>
+    Coloris.setInstance('.instance4', {
+      theme: 'pill',
+      themeMode: 'dark',
+      formatToggle: true,
+      closeButton: true,
+      clearButton: true,
+      swatches: [
+        'var(--color-1)',
+        'var(--color-2)',
+        'var(--color-3)',
+        'var(--color-4)',
+        'var(--color-5)',
+        'var(--color-6)',
+      ]
+    });
+
+  </script>
+</body>
 </html>

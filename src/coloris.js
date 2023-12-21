@@ -8,8 +8,8 @@
   const ctx = document.createElement('canvas').getContext('2d');
   const currentColor = { r: 0, g: 0, b: 0, h: 0, s: 0, v: 0, a: 1 };
   let container, picker, colorArea, colorMarker, colorPreview, colorValue, clearButton, closeButton,
-      hueSlider, hueMarker, alphaSlider, alphaMarker, currentEl, currentFormat, oldColor, keyboardNav,
-      colorAreaDims = {};
+    hueSlider, hueMarker, alphaSlider, alphaMarker, currentEl, currentFormat, oldColor, keyboardNav,
+    colorAreaDims = {};
 
   // Default settings
   const settings = {
@@ -89,7 +89,7 @@
           if (options.themeMode === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             settings.themeMode = 'dark';
           }
-          // The lack of a break statement is intentional
+        // The lack of a break statement is intentional
         case 'theme':
           if (options.theme) {
             settings.theme = options.theme;
@@ -149,7 +149,7 @@
 
           if (settings.inline) {
             const defaultColor = options.defaultColor || settings.defaultColor;
-            
+
             currentFormat = getColorFormatFromStr(defaultColor);
             updatePickerPosition();
             setColorFromStr(defaultColor);
@@ -311,7 +311,7 @@
       oldColor = currentEl.value;
       currentFormat = getColorFormatFromStr(oldColor);
       picker.classList.add('clr-open');
-      
+
       updatePickerPosition();
       setColorFromStr(oldColor);
 
@@ -319,7 +319,7 @@
         colorValue.focus({ preventScroll: true });
         colorValue.setSelectionRange(currentEl.selectionStart, currentEl.selectionEnd);
       }
-      
+
       if (settings.selectInput) {
         colorValue.select();
       }
@@ -390,7 +390,7 @@
 
         top += parent.scrollTop;
 
-      // Otherwise set the position relative to the whole document
+        // Otherwise set the position relative to the whole document
       } else {
         if (left + pickerWidth > document.documentElement.clientWidth) {
           left += coords.width - pickerWidth;
@@ -412,7 +412,7 @@
       offset.x += picker.offsetLeft;
       offset.y += picker.offsetTop;
     }
-    
+
     colorAreaDims = {
       width: colorArea.offsetWidth,
       height: colorArea.offsetHeight,
@@ -499,11 +499,23 @@
    * @param {string} str String representing a color.
    */
   function setColorFromStr(str) {
+    let colorProperty = undefined
+
+    if (str.startsWith('var(')) {
+      colorProperty = str
+      const localComputedStyle = window.getComputedStyle(picker)
+      // remove "var(" and ")"
+      const varName = str.substring(4, str.length - 1).trim()
+      const varColor = localComputedStyle.getPropertyValue(varName)
+      str = varColor
+    }
+
+
     const rgba = strToRGBA(str);
     const hsva = RGBAtoHSVA(rgba);
 
     updateMarkerA11yLabel(hsva.s, hsva.v);
-    updateColor(rgba, hsva);
+    updateColor(rgba, hsva, colorProperty);
 
     // Update the UI
     hueSlider.value = hsva.h;
@@ -655,8 +667,9 @@
    * Update the color picker's input field and preview thumb.
    * @param {Object} rgba Red, green, blue and alpha values.
    * @param {Object} [hsva] Hue, saturation, value and alpha values.
+   * @param {string|undefined} [colorProperty] CSS custom property reference in the format var(--property-name)
    */
-  function updateColor(rgba = {}, hsva = {}) {
+  function updateColor(rgba = {}, hsva = {}, colorProperty = undefined) {
     let format = settings.format;
 
     for (const key in rgba) {
@@ -689,16 +702,20 @@
       format = currentFormat;
     }
 
-    switch (format) {
-      case 'hex':
-        colorValue.value = hex;
-        break;
-      case 'rgb':
-        colorValue.value = RGBAToStr(currentColor);
-        break;
-      case 'hsl':
-        colorValue.value = HSLAToStr(HSVAtoHSLA(currentColor));
-        break;
+    if (colorProperty) {
+      colorValue.value = colorProperty;
+    } else {
+      switch (format) {
+        case 'hex':
+          colorValue.value = hex;
+          break;
+        case 'rgb':
+          colorValue.value = RGBAToStr(currentColor);
+          break;
+        case 'hsl':
+          colorValue.value = HSLAToStr(HSVAtoHSLA(currentColor));
+          break;
+      }
     }
 
     // Select the current format in the format switcher
@@ -1055,7 +1072,7 @@
       if (key === 'Escape') {
         closePicker(true);
 
-      // Display focus rings when using the keyboard
+        // Display focus rings when using the keyboard
       } else if (navKeys.includes(key)) {
         keyboardNav = true;
         picker.classList.add('clr-keyboard-nav');
@@ -1144,8 +1161,8 @@
         }
       });
 
-    // If the selector is not a string then it's a function
-    // in which case we need a regular event listener
+      // If the selector is not a string then it's a function
+      // in which case we need a regular event listener
     } else {
       fn = selector;
       context.addEventListener(type, fn);
@@ -1171,7 +1188,7 @@
 
   // Polyfill for Nodelist.forEach
   if (NodeList !== undefined && NodeList.prototype && !NodeList.prototype.forEach) {
-      NodeList.prototype.forEach = Array.prototype.forEach;
+    NodeList.prototype.forEach = Array.prototype.forEach;
   }
 
   // Expose the color picker to the global scope
